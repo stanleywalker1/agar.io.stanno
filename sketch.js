@@ -124,6 +124,7 @@ function draw() {
     gamePlaying();
   }
   else {
+    
     gameEnd();
   }
   // let fps = frameRate();
@@ -221,9 +222,9 @@ if (seconds >= 60){
 fill(255);
 stroke(0);
 strokeWeight(2);
-textSize(18);
-text("Mass: " + score, 20, 45);
-text(nf(minutes, 2) + ":" + nf(seconds, 2) + "." + nf(millisecs, 1) , 20, 65);
+textSize(15);
+text("Mass: " + score, 15, 22);
+text(nf(minutes, 2) + ":" + nf(seconds, 2) + "." + nf(millisecs, 1) , 15, 40);
 
   translate(width/2-player.position.x, height/2-player.position.y);
 
@@ -248,7 +249,7 @@ text(nf(minutes, 2) + ":" + nf(seconds, 2) + "." + nf(millisecs, 1) , 20, 65);
 }
 
 function gameEnd() {
-  background(0);
+  background(20);
   for(let i = particles.length -1; i >= 0; i--){
     particles[i].playMove();
     particles[i].display();
@@ -270,6 +271,7 @@ function mousePressed() {
     state = 1;
   }
   else if (restart == true) {
+    checkHighScore(score);
     localStorage.setItem('playerScore', score);
     reset();
     state = 0;
@@ -377,7 +379,6 @@ class Danger {
 
      let d = dist(this.x, this.y, player.position.x, player.position.y);
      if (d < player.size/2+ this.size/2){
-      checkHighScore(score);
       state = 2;
       console.log("you died: "+ state);
 
