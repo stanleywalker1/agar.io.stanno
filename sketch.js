@@ -46,11 +46,10 @@ function preload(){
 
 function setup() {
   let cnv = createCanvas(700, 500);
-  //document.getElementById("content").appendChild(cnv);
   cnv.parent("content");
   cnv.style('width', '100%');
   cnv.style('height', '100%');
-  showHighScores();
+  
   
   score = 0;
   millisecs = 0;
@@ -58,7 +57,9 @@ function setup() {
   minutes = 0;
   crumbAmount = 50;
 
+  
   leaderboard = localStorage.getItem('playerScore');
+  
 
   playerSize = 50;
   playerSpeed = 2.5;
@@ -66,57 +67,36 @@ function setup() {
   player = new human(width/2, height/2, playerSize, "abraiz", textGrow);
   pallete = [color('#7400b8'), color('#e67e22'), color('#5e60ce'), color('#5390d9'), color('#4ea8de'), color('48bfe3,'), color('#56cfe1'), color('#64dfdf'), color('#72efdd'), color('#80ffdb')];
   dangerColor = [color('#621708'), color('#941b0c'), color('#bc3908'), color('#f6aa1c')];
-  // pallete = ['#7400b8', '#e67e22', '#5e60ce', '#5390d9', '#4ea8de', color('48bfe3,'), '#56cfe1', '#64dfdf', '#72efdd', '#80ffdb'];
-    colorPicker = random(pallete);
-    console.log(colorPicker);
-    // dangerPicker = random(dangerColor);
+  colorPicker = random(pallete);
+  console.log(colorPicker);
+
+  
+  noiseDetail(24);
+
+  buttonXW = 200;
+  buttonYW = 50;
+
+  foodSize = 20;    
+
+  hasRun = false;
+
+  for (let i = 0; i <crumbAmount; i++){
+    crumbs[i] = new food(random(width*2), random(height*2), foodSize);
     
-    noiseDetail(24);
+  }
+  for (let i = 0; i <  500; i++){
+    let tempParticle = new Particle(random(width*2), random(height*2), 5, random(pallete));
+    particles.push(tempParticle);
+  }
 
-    buttonXW = 200;
-    buttonYW = 50;
+  sliderLabel = createElement('h4', 'difficulty level');
+  sliderLabel.parent("slider");
 
-    foodSize = 20;    
+  slider = createSlider(0, maxDanger, 50, 1);
+  slider.parent("slider");
+  slider.style('width', '100%');
+  slider.style('height', '100%');
 
-    hasRun = false;
-
-    // nameText = createInput();
-    // nameText.position(width/2, height/2-80);
-
-    for (let i = 0; i <crumbAmount; i++){
-      crumbs[i] = new food(random(width*2), random(height*2), foodSize);
-      
-    }
-   // dangerAmount = 5;
-
-
-
-
-    for (let i = 0; i <  500; i++){
-      let tempParticle = new Particle(random(width*2), random(height*2), 5, random(pallete));
-      particles.push(tempParticle);
-    }
-
-    sliderLabel = createElement('h4', 'difficulty level');
-    sliderLabel.parent("slider");
-    // sliderLabel.style('width', '100%');
-    // sliderLabel.style('height', '100%');
-    // sliderLabel.style('color', '#f2f2f2');
-    // sliderLabel.style('text-align', 'center');
-    // sliderLabel.style('padding', '14px 16px');
-    // sliderLabel.style('text-decoration', 'none');
-
-    slider = createSlider(0, maxDanger, 50, 1);
-   // slider.position(width/2, height/2);
-    slider.parent("slider");
-    slider.style('width', '100%');
-    slider.style('height', '100%');
-
-
-
-    
-    // cnv.style('width', '100%');
-    // cnv.style('height', '100%');
 
 } 
 
@@ -143,16 +123,12 @@ function draw() {
 
 function gameStart() {
   background(20);
+  showHighScores();
   for(let i = particles.length -1; i >= 0; i--){
     particles[i].playMove();
     particles[i].display();
     
   }
-  // fill(0);
-  // stroke(0);
-  
-  // text("'start' mode - click to switch to 'play' mode", 20, 50);
-  //buttonX = 200;
   buttonY = 200;
 
   fill(255);
@@ -209,8 +185,6 @@ function gamePlaying() {
   slider.remove();
   sliderLabel.remove();
   background(240, 70);
-
-
 
  if (int(millis()/100)  % 10 != millisecs){
   millisecs++;
@@ -352,12 +326,9 @@ class food {
           crumbs[i] = new food(random(width*2), random(height*2), foodSize);
           
         }
-
       }
      }
    }
-
-
 }
 
 class Danger {
