@@ -498,11 +498,10 @@ function restartButton(testX, testY) {
 
 // check for button presses
 function isButtonPressed(testX, testY) {
-  millisecs = 0;
-  seconds = 0;
-  minutes = 0;
-
   while(state == 0){
+    millisecs = 0;
+    seconds = 0;
+    minutes = 0;
     if (testX > width/2 && testX < width/2+buttonXW && testY > buttonY && testY < buttonY + buttonYW) {
       return true;
     }
