@@ -31,12 +31,17 @@ let fpsLabel;
 
 let leaderboard;
 let word;
+let eatSound;
+let crash;
 const NO_OF_HIGH_SCORES = 10;
 const HIGH_SCORES = 'highScores';
 const highScoreString = localStorage.getItem(HIGH_SCORES);
 
 
-
+function preload(){
+  eatSound = loadSound('media/impact.mp3');
+  crash = loadSound('media/lose.mp3');
+}
 
 
 function setup() {
@@ -51,7 +56,7 @@ function setup() {
   millisecs = 0;
   seconds = 0;
   minutes = 0;
-  crumbAmount = 5;
+  crumbAmount = 50;
 
   leaderboard = localStorage.getItem('playerScore');
 
@@ -298,7 +303,8 @@ constructor(x, y, size, name, textGrow){
 
 move(){
   let vel = createVector(mouseX-width/2, mouseY- height/2);
-  vel.setMag(3);
+  vel.setMag(playerSpeed);
+  //console.log(vel);
   this.position.add(vel);
 }
 
@@ -333,7 +339,10 @@ class food {
       player.size += 10;
       player.textGrow += 2;
       score += 3;
-      playerSpeed -= 0.01;
+      playerSpeed -= 0.1;
+      console.log(playerSpeed);
+      eatSound.play();
+     // player.position.add(vel);
   
       if(crumbs.length == 0){
         for (let i = 0; i <15; i++){
@@ -379,6 +388,7 @@ class Danger {
 
      let d = dist(this.x, this.y, player.position.x, player.position.y);
      if (d < player.size/2+ this.size/2){
+      crash.play();
       state = 2;
       console.log("you died: "+ state);
 
@@ -533,7 +543,7 @@ function isButtonPressed(testX, testY) {
     score = 0;
 
     playerSize = 50;
-    playerSpeed = 2.5;
+    playerSpeed = 3;
     textGrow = 15;
     player = new human(width/2, height/2, playerSize, "abraiz", textGrow);
     colorPicker = random(pallete);
