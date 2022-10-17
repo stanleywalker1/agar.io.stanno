@@ -157,6 +157,7 @@ function gameStart() {
 
   fill(255);
   textSize(15);
+  textAlign(LEFT);
   text("last score: "  + leaderboard, 20, 20);
   
   drawButton(mouseX, mouseY);
@@ -228,6 +229,7 @@ fill(255);
 stroke(0);
 strokeWeight(2);
 textSize(15);
+textAlign(LEFT);
 text("Mass: " + score, 15, 22);
 text(nf(minutes, 2) + ":" + nf(seconds, 2) + "." + nf(millisecs, 1) , 15, 40);
 
@@ -504,7 +506,8 @@ function restartButton(testX, testY) {
   noStroke();
   fill(0);
   textSize(15);
-  text("restart", width/2-buttonXW/2+buttonXW/2-15, buttonY+30)
+  textAlign(CENTER);
+  text("restart", width/2-buttonXW/2+buttonXW/2, buttonY+30)
 }
 
 // check for button presses
