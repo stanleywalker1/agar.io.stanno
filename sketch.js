@@ -313,7 +313,8 @@ move(){
     ellipse(this.position.x, this.position.y, this.size, this.size);
     textSize(this.textGrow);
     fill(255);
-    text(word, this.position.x-21,this.position.y+1);
+    textAlign(CENTER);
+    text(word, this.position.x,this.position.y+1);
     fill(0, 102, 153, 51);
   }
 }
