@@ -1,9 +1,3 @@
-// position for our button
-let buttonX, buttonY;
-
-// keep track of # of presses
-let presses = 0;
-
 let state = 0;
 let nameText;
 let player;
@@ -17,6 +11,7 @@ let crumbAmount;
 let dangers = [];
 let dangerAmount = 0;
 let particles = [];
+let buttonX, buttonY;
 let buttonXW;
 let buttonYW;
 let playerSize;
@@ -35,6 +30,13 @@ let minutes;
 let fpsLabel;
 
 let leaderboard;
+let word;
+const NO_OF_HIGH_SCORES = 10;
+const HIGH_SCORES = 'highScores';
+const highScoreString = localStorage.getItem(HIGH_SCORES);
+
+
+
 
 
 function setup() {
@@ -43,12 +45,15 @@ function setup() {
   cnv.parent("content");
   cnv.style('width', '100%');
   cnv.style('height', '100%');
+  showHighScores();
   
   score = 0;
   millisecs = 0;
   seconds = 0;
   minutes = 0;
   crumbAmount = 5;
+
+  leaderboard = localStorage.getItem('playerScore');
 
   playerSize = 50;
   playerSpeed = 2.5;
@@ -60,6 +65,7 @@ function setup() {
     colorPicker = random(pallete);
     console.log(colorPicker);
     // dangerPicker = random(dangerColor);
+    
     noiseDetail(24);
 
     buttonXW = 200;
@@ -100,6 +106,8 @@ function setup() {
     slider.parent("slider");
     slider.style('width', '100%');
     slider.style('height', '100%');
+
+
 
     
     // cnv.style('width', '100%');
@@ -143,7 +151,7 @@ function gameStart() {
 
   fill(255);
   textSize(15);
-  text("Presses: " + leaderboard, 20, 20);
+  text("last score: "  + leaderboard, 20, 20);
   
   drawButton(mouseX, mouseY);
 
@@ -189,18 +197,13 @@ function dangerSpawnY(){
 
 
 
-
 function gamePlaying() {
   addDanger();
   slider.remove();
   sliderLabel.remove();
   background(240, 70);
 
-  fill(255);
-  stroke(0);
-  strokeWeight(2);
-  textSize(18);
-  text("Mass: " + score, 20, 45);
+
 
  if (int(millis()/100)  % 10 != millisecs){
   millisecs++;
@@ -214,13 +217,15 @@ if (seconds >= 60){
   seconds -= 60;
   minutes++;
 }
-// fill(255);
-// stroke(0);
-// strokeWeight(2);
-// textSize(18);
-  text(nf(minutes, 2) + ":" + nf(seconds, 2) + "." + nf(millisecs, 1) , 20, 65);
 
-  translate(width/2-player.x, height/2-player.y);
+fill(255);
+stroke(0);
+strokeWeight(2);
+textSize(18);
+text("Mass: " + score, 20, 45);
+text(nf(minutes, 2) + ":" + nf(seconds, 2) + "." + nf(millisecs, 1) , 20, 65);
+
+  translate(width/2-player.position.x, height/2-player.position.y);
 
   for(let i = crumbs.length -1; i >= 0; i--){
     crumbs[i].display(colorPicker);
@@ -239,18 +244,19 @@ if (seconds >= 60){
   }
   player.display(colorPicker); 
   player.move();
-  // player.checkHit();
+
 }
 
 function gameEnd() {
   background(0);
+  for(let i = particles.length -1; i >= 0; i--){
+    particles[i].playMove();
+    particles[i].display();
+    
+  }
   stroke(255);
- // text("Game is in 'end' mode", 20, 50);
-
-  // buttonY = 200;
    restartButton(mouseX, mouseY);
-   fill(255);
-   text("Abraiz's score: "+ score, width/2-20, height*.8);
+
 }
 
 function mousePressed() {
@@ -265,52 +271,43 @@ function mousePressed() {
   }
   else if (restart == true) {
     localStorage.setItem('playerScore', score);
-    leaderboard = localStorage.getItem('playerScore');
-    console.log(leaderboard);
     reset();
     state = 0;
   }
 }
 
+function nameFunction(name) {
+  // grab the string from the text box
+  word = name.value;
+
+  return word;
+}
+
 
 class human {
-  constructor(x, y, size, name, textGrow){
-    this.x = x;
-    this.y = y;
-    this.size = size;
-    this.name = name;
-    this.textGrow = textGrow;
-  }
+constructor(x, y, size, name, textGrow){
+  this.x = x;
+  this.y = y;
+  this.position = createVector(x, y);
+  this.size = size;
+  this.name = name;
+  this.textGrow = textGrow;
+}
+
+move(){
+  let vel = createVector(mouseX-width/2, mouseY- height/2);
+  vel.setMag(3);
+  this.position.add(vel);
+}
 
   display(colorPicker){
     fill(colorPicker);
-    ellipse(this.x, this.y, this.size, this.size);
+    ellipse(this.position.x, this.position.y, this.size, this.size);
     textSize(this.textGrow);
     fill(255);
-    text(this.name, this.x-21,this.y+1);
-    // fill(0, 102, 153, 51);
+    text(word, this.position.x-21,this.position.y+1);
+    fill(0, 102, 153, 51);
   }
-
-  move(){
-    if (keyIsDown(65)) {
-      // move left
-      this.x -= playerSpeed;
-    }
-    if (keyIsDown(68)) {
-      // move right
-      this.x += playerSpeed;
-    }
-    if (keyIsDown(87)) {
-      // move up
-      this.y -= playerSpeed;
-    }
-    if (keyIsDown(83)) {
-      // move down
-      this.y += playerSpeed;
-
-    }
-  }
-
 }
 
 class food {
@@ -327,10 +324,7 @@ class food {
   }
 
   checkHit(i){
-     
-   //  stroke(255);
-    //  line(this.x, this.y, player.x, player.y);
-     let d = dist(this.x, this.y, player.x, player.y);
+     let d = dist(this.x, this.y, player.position.x, player.position.y);
      if (d < player.size/2){
       console.log("eatin");
       crumbs.splice(i, 1);
@@ -338,9 +332,9 @@ class food {
       player.textGrow += 2;
       score += 3;
       playerSpeed -= 0.01;
-      console.log(playerSpeed);
+  
       if(crumbs.length == 0){
-        for (let i = 0; i <5; i++){
+        for (let i = 0; i <15; i++){
           crumbs[i] = new food(random(width*2), random(height*2), foodSize);
           
         }
@@ -381,9 +375,9 @@ class Danger {
   checkHit(){
     stroke(0);
 
-     let d = dist(this.x, this.y, player.x, player.y);
+     let d = dist(this.x, this.y, player.position.x, player.position.y);
      if (d < player.size/2+ this.size/2){
-      
+      checkHighScore(score);
       state = 2;
       console.log("you died: "+ state);
 
@@ -466,17 +460,10 @@ class Particle {
       this.xOffset += 0.01;
       this.yOffset += 0.01;
   }
-
-
 }
-
-
 
 // function to draw our button
 function drawButton(testX, testY) {
-
-  // if the supplied x & y position are over the button we should change our fill
-  // color to indicate that the user is "hovering" over the button
   if (testX > width/2-buttonXW/2 && testX < width/2-buttonXW/2+buttonXW && testY > buttonY && testY < buttonY + buttonYW) {
     fill('#5e60ce');
   }
@@ -491,11 +478,9 @@ function drawButton(testX, testY) {
   text("start", width/2-buttonXW/2+buttonXW/2-10, buttonY+30)
 }
 
-// function to draw our button
+// draw our button
 function restartButton(testX, testY) {
 
-  // if the supplied x & y position are over the button we should change our fill
-  // color to indicate that the user is "hovering" over the button
   if (testX > width/2-buttonXW/2 && testX < width/2-buttonXW/2+buttonXW && testY > buttonY && testY < buttonY + buttonYW) {
     fill('#5e60ce');
   }
@@ -507,23 +492,19 @@ function restartButton(testX, testY) {
   noStroke();
   fill(0);
   textSize(15);
-  text("restart", width/2-buttonXW/2+buttonXW/2-10, buttonY+30)
+  text("restart", width/2-buttonXW/2+buttonXW/2-15, buttonY+30)
 }
 
-// function to check for button presses
+// check for button presses
 function isButtonPressed(testX, testY) {
   millisecs = 0;
   seconds = 0;
   minutes = 0;
 
   while(state == 0){
-
-    // now test to see if the user is over the button - if so, they are clicking on it!
     if (testX > width/2 && testX < width/2+buttonXW && testY > buttonY && testY < buttonY + buttonYW) {
       return true;
     }
-
-    // not over the button - return false
       else {
         return false;
       }
@@ -533,19 +514,13 @@ function isButtonPressed(testX, testY) {
   function isRestartButtonPressed(testX, testY) {
 
     while(state == 2){
-  
-      // now test to see if the user is over the button - if so, they are clicking on it!
       if (testX > width/2 && testX < width/2+buttonXW && testY > buttonY && testY < buttonY + buttonYW) {
         return true;
       }
-  
-      // not over the button - return false
         else {
           return false;
         }
       }
-
-
     }
 
   function glow(glowColor, blurriness){
@@ -561,8 +536,6 @@ function isButtonPressed(testX, testY) {
     playerSpeed = 2.5;
     textGrow = 15;
     player = new human(width/2, height/2, playerSize, "abraiz", textGrow);
-   // pallete = [color('#7400b8'), color('#e67e22'), color('#5e60ce'), color('#5390d9'), color('#4ea8de'), color('48bfe3,'), color('#56cfe1'), color('#64dfdf'), color('#72efdd'), color('#80ffdb')];
-    // pallete = ['#7400b8', '#e67e22', '#5e60ce', '#5390d9', '#4ea8de', color('48bfe3,'), '#56cfe1', '#64dfdf', '#72efdd', '#80ffdb'];
     colorPicker = random(pallete);
     noiseDetail(24);
 
@@ -573,16 +546,10 @@ function isButtonPressed(testX, testY) {
     crumbs = [];
     dangers = [];
 
-
     for (let i = 0; i <crumbAmount; i++){
       crumbs[i] = new food(random(width*2), random(height*2), foodSize);
       
     }
-
-    // for (let i = 0; i <5; i++){
-    //   dangers[i] = new Danger(random(width*2), random(height*2), 50);
-      
-    // }
     dangerAmount = 5;
 
     sliderLabel = createElement('h4', 'difficulty level');
@@ -593,7 +560,44 @@ function isButtonPressed(testX, testY) {
     slider.style('width', '100%');
     slider.style('height', '100%');
 
+    leaderboard = localStorage.getItem('playerScore');
+
     hasRun = false;
+  }
 
 
+  function checkHighScore(score) {
+    const highScores = JSON.parse(localStorage.getItem(HIGH_SCORES)) ?? [];
+    const lowestScore = highScores[NO_OF_HIGH_SCORES - 1]?.score ?? 0;
+    
+    if (score > lowestScore) {
+      saveHighScore(score, highScores);
+      showHighScores();
+    }
+  }
+  
+  function saveHighScore(score, highScores) {
+    const name = prompt('You got a highscore! Enter name:');
+    const newScore = { score, name };
+    
+    // 1. Add to list
+    highScores.push(newScore);
+  
+    // 2. Sort the list
+    highScores.sort((a, b) => b.score - a.score);
+    
+    // 3. Select new list
+    highScores.splice(NO_OF_HIGH_SCORES);
+    
+    // 4. Save to local storage
+    localStorage.setItem(HIGH_SCORES, JSON.stringify(highScores));
+  };
+  
+  function showHighScores() {
+    const highScores = JSON.parse(localStorage.getItem(HIGH_SCORES)) ?? [];
+    const highScoreList = document.getElementById(HIGH_SCORES);
+    
+    highScoreList.innerHTML = highScores
+      .map((score) => `<li>${score.score} - ${score.name}`)
+      .join('');
   }

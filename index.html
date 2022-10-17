@@ -4,10 +4,6 @@
     <!-- load in the p5 core library -->
     <script src="https://cdn.jsdelivr.net/npm/p5@1.4.2/lib/p5.js"></script>
 
-    <!-- note that you can load the p5.js library locally as well -->
-    <!-- <script src="../js/p5.js"></script> -->
-
-    <!-- your custom sketch code -->
     <script src="sketch.js"></script>
 
     <!-- custom CSS styles for this page -->
@@ -15,7 +11,6 @@
       * {
         box-sizing: border-box;
         font-family: monospace;
-       
       }
 
       body {
@@ -24,7 +19,6 @@
         
       }
 
-      /* Style the top navigation bar */
       #topnav {
         overflow: hidden;
         background-color: #333;
@@ -32,6 +26,9 @@
         justify-content: space-between;
         flex-direction: row;
         align-items: center;
+        background-image: url('/media/agariomush.png');
+        background-repeat: no-repeat;
+        background-size: cover;
       }
       #slider {
         display: flex;
@@ -40,7 +37,6 @@
         padding-right: 10px;
       }
 
-      /* Style the topnav links */
       #slider h4 {
         color: #f2f2f2d4;
         text-align: center;
@@ -51,24 +47,36 @@
       #topnav h2 {
         color: #f2f2f2;
         text-align: center;
-        padding: 14px 16px;
+        padding-top: 14px;
+        padding-left: 14px;
+        padding-right: 14px;
+        margin-bottom: 0;
         text-decoration: none;
       }
 
-      /* Change color on hover */
-      .topnav a:hover {
-        background-color: #ddd;
-        color: black;
+      #TitleName{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
 
-      /* Style the content */
+      #controls {
+        color: #f2f2f2d4;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+
+      }
+
       .content {
         background-color: #ddd;
         padding: 10px;
-        /* height: 200px; Should be removed. Only for demonstration */
+       
+      }
+      #content {
+        padding-top: 3px;
       }
 
-      /* Style the footer */
       .footer {
         background-color: #333;
         padding: 10px;
@@ -97,28 +105,35 @@
   </head>
   <body>
     <div id="topnav">
-      <h2>agar.io by stanno </h2>
+      <div id="TitleName">
+      <h2>agar.io </h2>
+      <h4 style="margin-top: 0;padding-left: 2px;text-decoration: underline;text-decoration-color: #b8b3eadf;"> by stanno</h4>
+    </div>
 
-
-      
-      <div id ="slider">
-        <!-- <h3>difficult level</h3> -->
+      <div id="controls">
+        name: <input type="text" id="name1" oninput="nameFunction(this);"><br>
       </div>
+      <div id ="slider"></div>
 
     </div>
     
-    <div id="content">
-      <!-- <h2>CSS Template</h2>
-      <p>A topnav, content and a footer.</p> -->
-    </div>
+    <div id="content"></div>
     
     <div class="footer">
+
       <h4>Directons</h4>
-      <p> The objective is simple: eat as much food as you can (same color as your player) while avoiding the danger spikes. Movement with AWSD keys. The larger you become the slower you move. ～ 加油 ～
+      <p> The objective: eat as much food as you can (same color as your player) while avoiding the danger spikes. Movement with AWSD keys. The larger you become the slower you move. 加油
         </p>
       <h4>About</h4> 
-         <p>This is my take on the classic agar.io game that many of us lived on in middle school. This project is fully open source with code avalible on my portolio site. Built for Interactive Computing at NYU w/ Professor Kapp. Audio by @</p>
-    
+         <p>This is my take on the classic agar.io game from my middle school era. This project is open source with code 
+          avalible on my
+          <a style="color: cadetblue;
+          text-decoration-style: dashed;" 
+          href="https://stanno.us/"
+          > portolio site</a>.
+          Built for Interactive Computing at NYU w/ Professor Kapp. Audio by @</p>
+      <h4>Leaderboard</h4>
+      <ol id="highScores"></ol>
     </div>
   </body>
 </html>
