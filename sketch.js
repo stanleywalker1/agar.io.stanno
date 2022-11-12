@@ -555,7 +555,7 @@ function isButtonPressed(testX, testY) {
     const highScores = JSON.parse(localStorage.getItem(HIGH_SCORES)) ?? [];
     const lowestScore = highScores[NO_OF_HIGH_SCORES - 1]?.score ?? 0;
     
-    if (score > lowestScore) {
+    if (score > lowestScore && score > 70) {
       saveHighScore(score, highScores);
       showHighScores();
     }
